@@ -40,4 +40,7 @@
     <string name="escanear">Escanear</string>
     <string name="crear_qr">Crear QR</string>
     <string name="creator">Made by: Carlos Hernández</string>
+    <string name="Inicio">Inicio</string>
+    <string name="Scan">Escanear</string>
+    <string name="Create">Crear</string>
 </resources>
