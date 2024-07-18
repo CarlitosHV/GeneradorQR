@@ -1,4 +1,4 @@
-package com.hardbug.escanerqr.Models
+package com.hardbug.escanerqr.models
 
 import java.util.Date
 

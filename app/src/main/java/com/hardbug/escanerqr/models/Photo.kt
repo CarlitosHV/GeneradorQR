@@ -1,4 +1,4 @@
-package com.hardbug.escanerqr.Models
+package com.hardbug.escanerqr.models
 
 class Photo {
     private var photoId: Int = 0

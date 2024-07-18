@@ -43,4 +43,7 @@
     <string name="Inicio">Inicio</string>
     <string name="Scan">Escanear</string>
     <string name="Create">Crear</string>
+    <string name="ErrorXCamara">No se ha podido abrir la cámara</string>
+    <string name="ErrorScanner">Ha ocurrido un error al realizar el escaneo</string>
+    <string name="NoPermissionCamera">No se ha permitido el uso de la cámara. La aplicación podría no funcionar correctamente</string>
 </resources>
