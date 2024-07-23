@@ -138,7 +138,6 @@ class CameraFragment : Fragment() {
         cameraExecutor.shutdown()
     }
 
-    @Deprecated("Deprecated en Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,

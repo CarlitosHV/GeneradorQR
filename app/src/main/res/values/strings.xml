@@ -46,4 +46,11 @@
     <string name="ErrorXCamara">No se ha podido abrir la cámara</string>
     <string name="ErrorScanner">Ha ocurrido un error al realizar el escaneo</string>
     <string name="NoPermissionCamera">No se ha permitido el uso de la cámara. La aplicación podría no funcionar correctamente</string>
+    <string name="NoPermissionStorage">No se ha permitido el uso del almacenamiento.</string>
+    <string name="select_barcode_type">Selecciona un tipo de código</string>
+    <string name="enter_data_to_encode">Ingresa tu código a convertir</string>
+    <string name="generate_code">Generar código</string>
+    <string name="code_image">Código generado</string>
+    <string name="text_select_image">(Opcional) Si quieres personalizar el diseño, puedes seleccionar una imagen como relleno.</string>
+    <string name="select_image">Seleccionar imagen</string>
 </resources>
