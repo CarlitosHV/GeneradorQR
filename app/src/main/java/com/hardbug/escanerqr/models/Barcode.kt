@@ -14,7 +14,7 @@ object BarcodeTypes{
         Barcode("Code 39", 0),
         Barcode("Code 128", 0),
         Barcode("ITF", 0),
-        Barcode("Codabar", 0),
+        Barcode("Codebar", 0),
         Barcode("QRCode", 0)
     )
 }

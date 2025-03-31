@@ -53,4 +53,26 @@
     <string name="code_image">Código generado</string>
     <string name="text_select_image">(Opcional) Si quieres personalizar el diseño, puedes seleccionar una imagen como relleno.</string>
     <string name="select_image">Seleccionar imagen</string>
+    <string name="customization_options">Opciones de personalización</string>
+    <string name="code_color">Color del código:</string>
+    <string name="change">Cambiar</string>
+    <string name="add_logo">Logo central:</string>
+    <string name="select">Seleccionar</string>
+    <string name="selected_logo_preview">Vista previa del logo seleccionado</string>
+    <string name="code_preview">Vista previa</string>
+    <string name="code_image_preview">Vista previa del código generado</string>
+    <string name="select_code_color">Seleccionar color del código</string>
+    <string name="black">Negro</string>
+    <string name="blue">Azul</string>
+    <string name="red">Rojo</string>
+    <string name="green">Verde</string>
+    <string name="magenta">Magenta</string>
+    <string name="cyan">Cian</string>
+    <string name="dark_gray">Gris oscuro</string>
+    <string name="error_generating_code">Error al generar el código</string>
+    <string name="save">Guardar</string>
+    <string name="share">Compartir</string>
+    <string name="image_saved_successfully">Imagen guardada correctamente</string>
+    <string name="error_saving_image">Error al guardar la imagen</string>
+    <string name="share_code">Compartir código QR</string>
 </resources>

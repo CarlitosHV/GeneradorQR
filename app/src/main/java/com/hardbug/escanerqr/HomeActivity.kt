@@ -47,10 +47,15 @@ class HomeActivity : AppCompatActivity() {
         return true
     }
 
-    private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
+    fun replaceFragment(fragment: Fragment, addToBackStack: Boolean = false) {
+        val transaction = supportFragmentManager.beginTransaction()
             .replace(R.id.content, fragment)
-            .commit()
+
+        if (addToBackStack) {
+            transaction.addToBackStack(null)
+        }
+
+        transaction.commit()
     }
 
 }

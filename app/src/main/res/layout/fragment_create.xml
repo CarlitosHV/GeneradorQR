@@ -1,71 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="15dp"
-    android:id="@+id/FragmentCreate"
+    android:fillViewport="true"
     tools:context=".views.CreateFragment">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_marginTop="25dp"
-        android:id="@+id/LayoutBarcodeType"
+    <LinearLayout
+        android:id="@+id/FragmentCreate"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:hint="@string/select_barcode_type"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="15dp">
 
-        <AutoCompleteTextView
-            android:id="@+id/spinnerBarCodeTypes"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/LayoutBarcodeType"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:labelFor="@+id/LayoutBarcodeType"
-            android:inputType="text" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginTop="25dp"
+            android:hint="@string/select_barcode_type"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_marginTop="25dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/enter_data_to_encode"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+            <AutoCompleteTextView
+                android:id="@+id/spinnerBarCodeTypes"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:inputType="text"
+                android:labelFor="@+id/LayoutBarcodeType" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextData"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:hint="@string/enter_data_to_encode"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:text="@string/text_select_image"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonSelectImage"
-        android:layout_marginTop="5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/select_image"
-        style="@style/Widget.Material3.Button" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:text="@string/customization_options"
+            style="@style/TextAppearance.Material3.TitleMedium"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonGenerate"
-        android:layout_marginTop="25dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/generate_code"
-        style="@style/Widget.Material3.Button" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-    <ImageView
-        android:id="@+id/imageViewCode"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:contentDescription="@string/code_image" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/code_color"
+                android:layout_marginEnd="8dp"/>
 
-</LinearLayout>
+            <ImageView
+                android:id="@+id/colorPreview"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:backgroundTint="@android:color/black"
+                android:background="@drawable/circle_background"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonSelectColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/change"
+                style="@style/Widget.Material3.Button.OutlinedButton"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_logo"
+                android:layout_marginEnd="8dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonSelectImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/select"
+                style="@style/Widget.Material3.Button.OutlinedButton"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/logoPreview"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="start"
+            android:visibility="gone"
+            android:contentDescription="@string/selected_logo_preview"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonGenerate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="25dp"
+            android:text="@string/generate_code"
+            style="@style/Widget.Material3.Button"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/code_preview"
+            style="@style/TextAppearance.Material3.TitleMedium"/>
+
+        <ImageView
+            android:id="@+id/imageViewCode"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:background="@color/m3_sys_color_light_outline"
+            android:padding="8dp"
+            android:contentDescription="@string/code_image_preview"/>
+    </LinearLayout>
+</ScrollView>
