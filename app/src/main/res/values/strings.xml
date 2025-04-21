@@ -75,4 +75,5 @@
     <string name="image_saved_successfully">Imagen guardada correctamente</string>
     <string name="error_saving_image">Error al guardar la imagen</string>
     <string name="share_code">Compartir código QR</string>
+    <string name="nombre_del_codigo">Nombre del código</string>
 </resources>

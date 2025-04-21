@@ -39,6 +39,7 @@ import java.io.InputStream
 class CreateFragment : Fragment() {
     private lateinit var codeViewModel: CodeViewModel
     private lateinit var editTextData: com.google.android.material.textfield.TextInputEditText
+    private lateinit var editTextName: com.google.android.material.textfield.TextInputEditText
     private lateinit var buttonGenerate: MaterialButton
     private lateinit var buttonSelectImage: MaterialButton
     private lateinit var buttonSelectColor: MaterialButton
@@ -93,6 +94,7 @@ class CreateFragment : Fragment() {
         logoPreview = view.findViewById(R.id.logoPreview)
         colorPreview = view.findViewById(R.id.colorPreview)
         spinnerBarCodeTypes = view.findViewById(R.id.spinnerBarCodeTypes)
+        editTextName = view.findViewById(R.id.editTextName)
 
         setupBarcodeTypeSpinner()
 
@@ -182,10 +184,16 @@ class CreateFragment : Fragment() {
 
     private fun generateAndNavigateToCustomize() {
         val data = editTextData.text.toString()
+        val name = editTextName.text.toString()
         val selectedType = spinnerBarCodeTypes.text.toString()
 
         if (data.isEmpty()) {
             showSnackbar(getString(R.string.enter_data_to_encode))
+            return
+        }
+
+        if(name.isEmpty()){
+            showSnackbar("Debes ingresar un nombre para el código")
             return
         }
 

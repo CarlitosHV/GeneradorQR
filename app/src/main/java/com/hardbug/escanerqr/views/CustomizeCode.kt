@@ -18,12 +18,15 @@ import com.hardbug.escanerqr.R
 import com.hardbug.escanerqr.viewmodels.CodeViewModel
 import java.io.ByteArrayOutputStream
 import androidx.core.net.toUri
+import com.hardbug.escanerqr.models.ImageCode
+import java.util.UUID
 
 class CustomizeCode : Fragment() {
     private lateinit var codeViewModel: CodeViewModel
     private lateinit var imageViewCode: ImageView
     private lateinit var buttonSave: MaterialButton
     private lateinit var buttonShare: MaterialButton
+    private lateinit var imageCode : ImageCode
 
     private val saveImageLauncher = registerForActivityResult(
         ActivityResultContracts.CreateDocument("image/png")
@@ -65,9 +68,9 @@ class CustomizeCode : Fragment() {
         }
     }
 
-    private fun saveImage() {
+    private fun saveImage(name: String) {
         codeViewModel.generatedCode.value?.let { bitmap ->
-            val fileName = "QRCode_${System.currentTimeMillis()}.png"
+            val fileName = "Code_${name}_${System.currentTimeMillis()}.png"
             saveImageLauncher.launch(fileName)
         }
     }
@@ -122,5 +125,13 @@ class CustomizeCode : Fragment() {
                 .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
                 .show()
         }
+    }
+
+    private fun GenerateImageCode(name : String, path: String, metaData: String){
+        imageCode = ImageCode()
+        imageCode.name = name
+        imageCode.imageCodeUuid = UUID.randomUUID().toString()
+        imageCode.metaData = metaData
+        imageCode.urlPath = path
     }
 }
