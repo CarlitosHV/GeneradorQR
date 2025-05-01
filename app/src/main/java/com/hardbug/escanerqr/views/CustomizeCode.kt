@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +19,12 @@ import com.hardbug.escanerqr.R
 import com.hardbug.escanerqr.viewmodels.CodeViewModel
 import java.io.ByteArrayOutputStream
 import androidx.core.net.toUri
+import androidx.room.Room
+import com.hardbug.escanerqr.database.AppDatabase
 import com.hardbug.escanerqr.models.ImageCode
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 class CustomizeCode : Fragment() {
@@ -26,7 +32,7 @@ class CustomizeCode : Fragment() {
     private lateinit var imageViewCode: ImageView
     private lateinit var buttonSave: MaterialButton
     private lateinit var buttonShare: MaterialButton
-    private lateinit var imageCode : ImageCode
+    private lateinit var nameCode: String
 
     private val saveImageLauncher = registerForActivityResult(
         ActivityResultContracts.CreateDocument("image/png")
@@ -50,7 +56,7 @@ class CustomizeCode : Fragment() {
         buttonSave = view.findViewById(R.id.buttonSave)
         buttonShare = view.findViewById(R.id.buttonShare)
 
-        buttonSave.setOnClickListener { saveImage() }
+        buttonSave.setOnClickListener { saveImage(nameCode) }
         buttonShare.setOnClickListener { shareImage() }
     }
 
@@ -66,10 +72,16 @@ class CustomizeCode : Fragment() {
                 enableButtons(false)
             }
         }
+
+        codeViewModel.name.observe(viewLifecycleOwner) { n ->
+            if(n != null){
+                nameCode = n
+            }
+        }
     }
 
     private fun saveImage(name: String) {
-        codeViewModel.generatedCode.value?.let { bitmap ->
+        codeViewModel.generatedCode.value?.let {
             val fileName = "Code_${name}_${System.currentTimeMillis()}.png"
             saveImageLauncher.launch(fileName)
         }
@@ -77,6 +89,8 @@ class CustomizeCode : Fragment() {
 
     private fun saveBitmapToUri(uri: Uri) {
         try {
+            val metadata = getMetaDataFromUri(uri)
+            generateImageCode(nameCode, uri.toString(), metadata)
             requireContext().contentResolver.openOutputStream(uri)?.use { outputStream ->
                 codeViewModel.generatedCode.value?.compress(
                     Bitmap.CompressFormat.PNG,
@@ -127,11 +141,38 @@ class CustomizeCode : Fragment() {
         }
     }
 
-    private fun GenerateImageCode(name : String, path: String, metaData: String){
-        imageCode = ImageCode()
-        imageCode.name = name
-        imageCode.imageCodeUuid = UUID.randomUUID().toString()
-        imageCode.metaData = metaData
-        imageCode.urlPath = path
+    private fun generateImageCode(name: String, path: String, metaData: String) {
+        val imageCode = ImageCode().apply {
+            imageCodeUuid = UUID.randomUUID().toString()
+            this.name = name
+            urlPath = path
+            this.metaData = metaData
+        }
+
+        val db = Room.databaseBuilder(
+            requireContext(),
+            AppDatabase::class.java,
+            "image_code_db"
+        ).build()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            db.imageCodeDao().insertImageCode(imageCode)
+        }
     }
+
+
+    private fun getMetaDataFromUri(uri: Uri): String {
+        val cursor = requireContext().contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val displayNameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                val sizeIndex = it.getColumnIndex(OpenableColumns.SIZE)
+                val name = if (displayNameIndex != -1) it.getString(displayNameIndex) else "Unknown"
+                val size = if (sizeIndex != -1) it.getLong(sizeIndex) else -1L
+                return "Name: $name, Size: $size bytes"
+            }
+        }
+        return "No metadata available"
+    }
+
 }
