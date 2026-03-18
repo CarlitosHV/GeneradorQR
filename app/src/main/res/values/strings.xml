@@ -100,4 +100,12 @@
     <string name="delete_negative">Cancelar</string>
     <string name="recent_codes">Códigos Recientes</string>
     <string name="no_codes_yet">Aún no has creado códigos</string>
+
+    <string name="advanced_create_title">Creación Avanzada</string>
+    <string name="advanced_create_desc">Personaliza cada detalle de tu código</string>
+    <string name="code_info_header">Información del código</string>
+    <string name="visual_custom_header">Personalización visual</string>
+    <string name="change_qr_color">Cambiar Color QR</string>
+    <string name="add_center_logo">Agregar Logo Central</string>
+    <string name="preview_upper">VISTA PREVIA</string>
 </resources>

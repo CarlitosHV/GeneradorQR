@@ -1,7 +1,6 @@
 package com.hardbug.escanerqr.views
 
 import android.Manifest
-import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -18,14 +17,14 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
-import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
 import androidx.core.graphics.set
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.oned.Code128Writer
@@ -39,6 +38,7 @@ import java.io.InputStream
 class AdvancedCreateFragment : Fragment() {
     private lateinit var codeViewModel: CodeViewModel
     private lateinit var editTextData: com.google.android.material.textfield.TextInputEditText
+    private lateinit var dataInputLayout: TextInputLayout
     private lateinit var editTextName: com.google.android.material.textfield.TextInputEditText
     private lateinit var buttonGenerate: MaterialButton
     private lateinit var buttonSelectImage: MaterialButton
@@ -86,6 +86,7 @@ class AdvancedCreateFragment : Fragment() {
         codeViewModel = ViewModelProvider(requireActivity())[CodeViewModel::class.java]
 
         editTextData = view.findViewById(R.id.editTextData)
+        dataInputLayout = view.findViewById(R.id.textInputLayoutData)
         buttonGenerate = view.findViewById(R.id.buttonGenerate)
         buttonSelectImage = view.findViewById(R.id.buttonSelectImage)
         buttonSelectColor = view.findViewById(R.id.buttonSelectColor)
@@ -116,6 +117,7 @@ class AdvancedCreateFragment : Fragment() {
             val filters =
                 if (maxLength > 0) arrayOf(android.text.InputFilter.LengthFilter(maxLength)) else arrayOf()
             editTextData.filters = filters
+            dataInputLayout.error = null
             updateCodePreview()
         }
     }
@@ -169,7 +171,7 @@ class AdvancedCreateFragment : Fragment() {
 
         val colorNames = colors.map { it.second }.toTypedArray()
 
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle("Seleccionar color")
             .setItems(colorNames) { _, which ->
                 currentColor = colors[which].first
@@ -182,11 +184,20 @@ class AdvancedCreateFragment : Fragment() {
     private fun generateAndNavigateToCustomize() {
         val data = editTextData.text.toString()
         val name = editTextName.text.toString()
-        val selectedType = spinnerBarCodeTypes.text.toString()
+        val selectedTypeName = spinnerBarCodeTypes.text.toString()
+        
+        val barcodeType = BarcodeTypes.barCodes.find { it.name == selectedTypeName }
 
         if (data.isEmpty()) {
-            showSnackbar("Ingresa datos para codificar")
+            dataInputLayout.error = "Ingresa datos para codificar"
             return
+        }
+
+        barcodeType?.let {
+            if (it.length > 0 && data.length != it.length) {
+                dataInputLayout.error = "El formato para ${it.name} requiere exactamente ${it.length} caracteres (tienes ${data.length})"
+                return
+            }
         }
 
         if(name.isEmpty()){
@@ -194,14 +205,17 @@ class AdvancedCreateFragment : Fragment() {
             return
         }
 
-        val bitmap = when (selectedType) {
+        dataInputLayout.error = null
+
+        val bitmap = when (selectedTypeName) {
             "QRCode" -> generateQRCode(data, currentColor, currentBackgroundColor, selectedLogo)
             "Code 128" -> generateCode128(data)
-            else -> null
+            else -> generateQRCode(data, currentColor, currentBackgroundColor, selectedLogo)
         }
 
         bitmap?.let {
             codeViewModel.setGeneratedCode(it)
+            codeViewModel.setName(name)
             (requireActivity() as HomeActivity).replaceFragment(CustomizeCode(), true)
         } ?: showSnackbar("Error al generar el código")
     }
@@ -215,7 +229,7 @@ class AdvancedCreateFragment : Fragment() {
         return try {
             val size = 512
             val bitMatrix = QRCodeWriter().encode(data, BarcodeFormat.QR_CODE, size, size)
-            val bitmap = createBitmap(size, size)
+            val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
 
             for (x in 0 until size) {
                 for (y in 0 until size) {
@@ -235,7 +249,7 @@ class AdvancedCreateFragment : Fragment() {
             val width = 512
             val height = 200
             val bitMatrix = Code128Writer().encode(data, BarcodeFormat.CODE_128, width, height)
-            val bitmap = createBitmap(width, height)
+            val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
 
             for (x in 0 until width) {
                 for (y in 0 until height) {
@@ -266,9 +280,18 @@ class AdvancedCreateFragment : Fragment() {
 
     private fun updateCodePreview() {
         val data = editTextData.text.toString()
+        val selectedTypeName = spinnerBarCodeTypes.text.toString()
+        val barcodeType = BarcodeTypes.barCodes.find { it.name == selectedTypeName }
+
         if (data.isNotEmpty()) {
+            if (barcodeType != null && barcodeType.length > 0 && data.length != barcodeType.length) {
+                imageViewCode.setImageResource(R.drawable.baseline_qr_code_24)
+                imageViewCode.setColorFilter(Color.LTGRAY)
+                return
+            }
+
             val previewSize = 200
-            val bitmap = when (spinnerBarCodeTypes.text.toString()) {
+            val bitmap = when (selectedTypeName) {
                 "QRCode" -> generateQRCode(
                                 data,
                                 currentColor,
@@ -280,6 +303,7 @@ class AdvancedCreateFragment : Fragment() {
             }
 
             bitmap?.let {
+                imageViewCode.clearColorFilter()
                 imageViewCode.setImageBitmap(it)
             }
         }
