@@ -18,8 +18,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.hardbug.escanerqr.R
 import com.hardbug.escanerqr.viewmodels.CodeViewModel
 import java.io.ByteArrayOutputStream
-import androidx.core.net.toUri
-import androidx.room.Room
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.hardbug.escanerqr.HomeActivity
 import com.hardbug.escanerqr.database.AppDatabase
 import com.hardbug.escanerqr.models.ImageCode
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +32,7 @@ class CustomizeCode : Fragment() {
     private lateinit var imageViewCode: ImageView
     private lateinit var buttonSave: MaterialButton
     private lateinit var buttonShare: MaterialButton
-    private lateinit var nameCode: String
+    private var nameCode: String = "QR_Code"
 
     private val saveImageLauncher = registerForActivityResult(
         ActivityResultContracts.CreateDocument("image/png")
@@ -46,8 +46,8 @@ class CustomizeCode : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_customize_code, container, false)
-        setupViews(view)
         setupViewModel()
+        setupViews(view)
         return view
     }
 
@@ -74,7 +74,7 @@ class CustomizeCode : Fragment() {
         }
 
         codeViewModel.name.observe(viewLifecycleOwner) { n ->
-            if(n != null){
+            if (!n.isNullOrEmpty()) {
                 nameCode = n
             }
         }
@@ -88,31 +88,59 @@ class CustomizeCode : Fragment() {
     }
 
     private fun saveBitmapToUri(uri: Uri) {
-        try {
-            val metadata = getMetaDataFromUri(uri)
-            generateImageCode(nameCode, uri.toString(), metadata)
-            requireContext().contentResolver.openOutputStream(uri)?.use { outputStream ->
-                codeViewModel.generatedCode.value?.compress(
-                    Bitmap.CompressFormat.PNG,
-                    100,
-                    outputStream
-                )
-                showSnackbar(getString(R.string.image_saved_successfully))
+        val bitmap = codeViewModel.generatedCode.value ?: return
+        val currentContext = context?.applicationContext ?: return
+        val currentNameCode = nameCode
+
+        CoroutineScope(Dispatchers.IO).launch {
+            var success = false
+            try {
+                val metadata = getMetaDataFromUri(uri)
+                currentContext.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                    success = bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                }
+
+                if (success) {
+                    val imageCode = ImageCode().apply {
+                        imageCodeUuid = UUID.randomUUID().toString()
+                        this.name = currentNameCode
+                        urlPath = uri.toString()
+                        this.metaData = metadata
+                    }
+                    val db = AppDatabase.getDatabase(currentContext)
+                    db.imageCodeDao().insertImageCode(imageCode)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                success = false
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            showSnackbar(getString(R.string.error_saving_image))
+
+            launch(Dispatchers.Main) {
+                if (success) {
+                    showSnackbar(getString(R.string.image_saved_successfully))
+                    navigateToHome()
+                } else {
+                    showSnackbar(getString(R.string.error_saving_image))
+                }
+            }
         }
     }
 
     private fun shareImage() {
         codeViewModel.generatedCode.value?.let { bitmap ->
-            val shareIntent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_STREAM, getImageUri(bitmap))
-                type = "image/png"
+            try {
+                val shareIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_STREAM, getImageUri(bitmap))
+                    type = "image/png"
+                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                }
+                startActivity(Intent.createChooser(shareIntent, getString(R.string.share_code)))
+                navigateToHome()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                showSnackbar("Error al compartir el código")
             }
-            startActivity(Intent.createChooser(shareIntent, getString(R.string.share_code)))
         }
     }
 
@@ -125,7 +153,14 @@ class CustomizeCode : Fragment() {
             "QRCode_${System.currentTimeMillis()}",
             null
         )
-        return path.toUri()
+        return Uri.parse(path)
+    }
+
+    private fun navigateToHome() {
+        (requireActivity() as? HomeActivity)?.let { activity ->
+            activity.replaceFragment(HomeFragment())
+            activity.findViewById<BottomNavigationView>(R.id.bottom_navigation)?.selectedItemId = R.id.page_home
+        }
     }
 
     private fun enableButtons(enabled: Boolean) {
@@ -134,35 +169,17 @@ class CustomizeCode : Fragment() {
     }
 
     private fun showSnackbar(message: String) {
-        view?.let {
+        val rootView = activity?.findViewById<View>(android.R.id.content)
+        rootView?.let {
             Snackbar.make(it, message, Snackbar.LENGTH_SHORT)
                 .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
                 .show()
         }
     }
 
-    private fun generateImageCode(name: String, path: String, metaData: String) {
-        val imageCode = ImageCode().apply {
-            imageCodeUuid = UUID.randomUUID().toString()
-            this.name = name
-            urlPath = path
-            this.metaData = metaData
-        }
-
-        val db = Room.databaseBuilder(
-            requireContext(),
-            AppDatabase::class.java,
-            "image_code_db"
-        ).build()
-
-        CoroutineScope(Dispatchers.IO).launch {
-            db.imageCodeDao().insertImageCode(imageCode)
-        }
-    }
-
-
     private fun getMetaDataFromUri(uri: Uri): String {
-        val cursor = requireContext().contentResolver.query(uri, null, null, null, null)
+        val currentContext = context ?: return "No metadata available"
+        val cursor = currentContext.contentResolver.query(uri, null, null, null, null)
         cursor?.use {
             if (it.moveToFirst()) {
                 val displayNameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)

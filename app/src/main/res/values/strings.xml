@@ -76,4 +76,28 @@
     <string name="error_saving_image">Error al guardar la imagen</string>
     <string name="share_code">Compartir código QR</string>
     <string name="nombre_del_codigo">Nombre del código</string>
+
+    <string name="create_title">¿Qué quieres crear?</string>
+    <string name="quick_qr_title">Código QR rápido</string>
+    <string name="quick_qr_desc">Crea un QR simple al instante</string>
+    <string name="advanced_title">Avanzado</string>
+    <string name="advanced_desc">Personaliza colores, logos y tipos</string>
+    <string name="header_new_qr">Genera un código QR de manera rápida</string>
+    <string name="basic_info_qr">Configura los datos básicos de tu código</string>
+    <string name="content_qr">Contenido (Texto o URL)</string>
+    <string name="generar">Generar código</string>
+
+    <string name="generated_success">¡Código Generado!</string>
+    <string name="generated_desc">Tu código está listo para ser guardado o compartido</string>
+    <string name="auto_save_info">El código se guardará automáticamente en tu historial</string>
+    <string name="saved_code">El código se guardará automáticamente en tu historial</string>
+    <string name="sharing_code">Tu código está listo para ser guardado o compartido</string>
+    <string name="generated_code">¡Código Generado!</string>
+
+    <string name="delete_title">Confirmar eliminación</string>
+    <string name="delete_message">¿Estás seguro de que deseas eliminar este código QR? Esta acción no se puede deshacer.</string>
+    <string name="delete_positive">Eliminar</string>
+    <string name="delete_negative">Cancelar</string>
+    <string name="recent_codes">Códigos Recientes</string>
+    <string name="no_codes_yet">Aún no has creado códigos</string>
 </resources>
