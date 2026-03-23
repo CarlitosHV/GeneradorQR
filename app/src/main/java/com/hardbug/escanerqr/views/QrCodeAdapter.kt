@@ -41,8 +41,6 @@ class QrCodeAdapter(
                 val uri = item.urlPath.toUri()
                 if (uri.scheme.equals("file")) {
                     ivQrCode.setImageURI(uri)
-                } else {
-                    ivQrCode.setImageURI(uri)
                 }
             } catch (e: Exception) {
                 ivQrCode.setImageResource(R.drawable.baseline_qr_code_24)
