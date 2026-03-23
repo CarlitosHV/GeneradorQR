@@ -51,11 +51,11 @@ class QuickQRFragment : Fragment() {
         val name = editTextName.text.toString()
 
         if (data.isEmpty()) {
-            showSnackbar("Ingresa datos para el QR")
+            showSnackbar(getString(R.string.error_empty_data))
             return
         }
         if (name.isEmpty()) {
-            showSnackbar("Ingresa un nombre para el código")
+            showSnackbar(getString(R.string.error_empty_name))
             return
         }
 
@@ -64,7 +64,7 @@ class QuickQRFragment : Fragment() {
             codeViewModel.setGeneratedCode(it)
             codeViewModel.setName(name)
             (requireActivity() as HomeActivity).replaceFragment(CustomizeCode(), true)
-        } ?: showSnackbar("Error al generar el código")
+        } ?: showSnackbar(getString(R.string.error_generating_code))
     }
 
     private fun generateQRCode(data: String): Bitmap? {

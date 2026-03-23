@@ -108,4 +108,16 @@
     <string name="change_qr_color">Cambiar Color QR</string>
     <string name="add_center_logo">Agregar Logo Central</string>
     <string name="preview_upper">VISTA PREVIA</string>
+
+    <string name="error_empty_data">Ingresa datos para el QR</string>
+    <string name="error_empty_name">Ingresa un nombre para el código</string>
+    <string name="error_format_mismatch">El formato para %1$s requiere exactamente %2$d caracteres (tienes %3$d)</string>
+    <string name="error_sharing_code">Error al compartir el código</string>
+
+    <!-- Títulos de Toolbar -->
+    <string name="title_home">Inicio</string>
+    <string name="title_scan">Escanear Código</string>
+    <string name="title_create">Crear QR</string>
+    <string name="title_advanced_create">Configuración Avanzada</string>
+    <string name="title_customize">Personalizar Código</string>
 </resources>

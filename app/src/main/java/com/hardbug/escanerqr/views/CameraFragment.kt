@@ -73,13 +73,11 @@ class CameraFragment : Fragment() {
 
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
-            
-            // 1. Configurar Preview
+
             val preview = Preview.Builder().build().also {
                 it.setSurfaceProvider(previewView.surfaceProvider)
             }
 
-            // 2. Configurar ImageAnalysis para el escáner
             val imageAnalysis = ImageAnalysis.Builder()
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
@@ -91,10 +89,8 @@ class CameraFragment : Fragment() {
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             try {
-                // Desvincular todo antes de volver a vincular
                 cameraProvider.unbindAll()
-                
-                // Vincular Preview y ImageAnalysis juntos al ciclo de vida
+
                 cameraProvider.bindToLifecycle(
                     viewLifecycleOwner, cameraSelector, preview, imageAnalysis
                 )
@@ -118,13 +114,11 @@ class CameraFragment : Fragment() {
                     for (barcode in barcodes) {
                         barcode.rawValue?.let {
                             barcodeResult.text = it
-                            // Si quieres mostrar el resultado, asegúrate de que sea visible
                             barcodeResult.visibility = View.VISIBLE
                         }
                     }
                 }
                 .addOnFailureListener {
-                    // No mostramos Snackbar en cada fallo de escaneo para no saturar
                 }
                 .addOnCompleteListener {
                     imageProxy.close()

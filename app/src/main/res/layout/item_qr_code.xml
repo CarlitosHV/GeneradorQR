@@ -45,25 +45,19 @@
             android:textStyle="bold"
             android:textSize="16sp"
             android:textColor="?attr/colorOnSurface"
-            app:layout_constraintBottom_toTopOf="@id/tvQrMetadata"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btnDelete"
             app:layout_constraintStart_toEndOf="@id/cardImage"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
             tools:text="Mi código WiFi" />
 
         <TextView
             android:id="@+id/tvQrMetadata"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textSize="12sp"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/tvQrName"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="@id/tvQrName"
-            app:layout_constraintTop_toBottomOf="@id/tvQrName"
-            tools:text="PNG • 24 KB" />
+            app:layout_constraintTop_toBottomOf="@id/tvQrName" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDelete"

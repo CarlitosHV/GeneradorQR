@@ -29,15 +29,20 @@ class QrCodeAdapter(
     inner class QrViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val ivQrCode: ImageView = itemView.findViewById(R.id.ivQrCode)
         private val tvQrName: TextView = itemView.findViewById(R.id.tvQrName)
-        private val tvQrMetadata: TextView = itemView.findViewById(R.id.tvQrMetadata)
         private val btnDelete: View = itemView.findViewById(R.id.btnDelete)
 
         fun bind(item: ImageCode) {
             tvQrName.text = item.name
-            tvQrMetadata.text = item.metaData
-            
+
             try {
-                ivQrCode.setImageURI(Uri.parse(item.urlPath))
+                ivQrCode.setImageDrawable(null)
+
+                val uri = Uri.parse(item.urlPath)
+                if (uri.scheme == "file") {
+                    ivQrCode.setImageURI(uri)
+                } else {
+                    ivQrCode.setImageURI(uri)
+                }
             } catch (e: Exception) {
                 ivQrCode.setImageResource(R.drawable.baseline_qr_code_24)
             }
