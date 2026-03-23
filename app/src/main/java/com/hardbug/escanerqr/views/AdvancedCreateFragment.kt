@@ -75,7 +75,7 @@ class AdvancedCreateFragment : Fragment() {
                 result.data?.data?.let { uri ->
                     selectedLogo = uriToBitmap(uri)
                     if (selectedLogo != null) {
-                        showSnackbar(getString(R.string.logo_seleccionado_correctamente))
+                        showSnackbar("Logo seleccionado")
                     }
                 }
             }
@@ -174,17 +174,20 @@ class AdvancedCreateFragment : Fragment() {
                 
                 val hsv = FloatArray(3)
                 Color.colorToHSV(currentColor, hsv)
-                sliderHue.value = hsv[0]
+                
+                val safeHue = hsv[0].coerceIn(sliderHue.valueFrom, sliderHue.valueTo)
+                sliderHue.value = safeHue
             } catch (e: Exception) {
-                // Ignore invalid hex
             }
             isUpdating = false
         }
 
-        // Initialize
         val initialHsv = FloatArray(3)
         Color.colorToHSV(currentColor, initialHsv)
-        sliderHue.value = initialHsv[0]
+
+        val initialSafeHue = initialHsv[0].coerceIn(sliderHue.valueFrom, sliderHue.valueTo)
+        sliderHue.value = initialSafeHue
+        
         viewSelectedColor.setBackgroundColor(currentColor)
         editTextHex.setText(String.format("#%06X", 0xFFFFFF and currentColor))
 
@@ -195,7 +198,7 @@ class AdvancedCreateFragment : Fragment() {
         editTextHex.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s?.length == 7 || s?.length == 6) {
+                if (s?.length == 7 || (s?.length == 6 && !s.startsWith("#"))) {
                     updateColorFromHex(s.toString())
                 }
             }
@@ -248,19 +251,19 @@ class AdvancedCreateFragment : Fragment() {
         val barcodeType = BarcodeTypes.barCodes.find { it.name == selectedTypeName }
 
         if (data.isEmpty()) {
-            dataInputLayout.error = getString(R.string.error_empty_data)
+            dataInputLayout.error = "Ingresa datos"
             return
         }
 
         barcodeType?.let {
             if (!isDataLengthValid(data, it)) {
-                dataInputLayout.error = getString(R.string.error_format_mismatch, it.name, it.length, data.length)
+                dataInputLayout.error = "Longitud inválida para ${it.name}"
                 return
             }
         }
 
         if(name.isEmpty()){
-            showSnackbar(getString(R.string.error_empty_name))
+            showSnackbar("Ingresa un nombre")
             return
         }
 
@@ -276,7 +279,7 @@ class AdvancedCreateFragment : Fragment() {
             codeViewModel.setGeneratedCode(it)
             codeViewModel.setName(name)
             (requireActivity() as HomeActivity).replaceFragment(CustomizeCode(), true)
-        } ?: showSnackbar(getString(R.string.error_generating_code))
+        } ?: showSnackbar("Error al generar el código")
     }
 
     private fun generateBarcode(
