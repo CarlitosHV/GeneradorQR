@@ -9,5 +9,6 @@ data class ImageCode(
     var imageCodeUuid: String = "",
     var name: String = "",
     var urlPath: String = "",
-    var metaData: String = ""
+    var metaData: String = "",
+    var createdAt: Long = System.currentTimeMillis()
 )

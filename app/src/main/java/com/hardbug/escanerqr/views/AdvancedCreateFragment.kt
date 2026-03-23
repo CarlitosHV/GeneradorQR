@@ -10,6 +10,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +25,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
@@ -52,8 +56,13 @@ class AdvancedCreateFragment : Fragment() {
     private val requestPermissions = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-        val allPermissionsGranted = permissions.values.all { it }
-        if (allPermissionsGranted) {
+        val hasAccess = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions[Manifest.permission.READ_MEDIA_IMAGES] == true || permissions[Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED] == true
+        } else {
+            permissions[Manifest.permission.READ_EXTERNAL_STORAGE] == true
+        }
+
+        if (hasAccess) {
             selectImageFromGallery()
         } else {
             showSnackbar(getString(R.string.NoPermissionStorage))
@@ -65,6 +74,9 @@ class AdvancedCreateFragment : Fragment() {
             if (result.resultCode == android.app.Activity.RESULT_OK) {
                 result.data?.data?.let { uri ->
                     selectedLogo = uriToBitmap(uri)
+                    if (selectedLogo != null) {
+                        showSnackbar(getString(R.string.logo_seleccionado_correctamente))
+                    }
                 }
             }
         }
@@ -85,6 +97,8 @@ class AdvancedCreateFragment : Fragment() {
         colorPreview = view.findViewById(R.id.colorPreview)
         spinnerBarCodeTypes = view.findViewById(R.id.spinnerBarCodeTypes)
         editTextName = view.findViewById(R.id.editTextName)
+
+        buttonSelectImage.visibility = View.GONE
 
         setupBarcodeTypeSpinner()
         setupListeners()
@@ -108,6 +122,13 @@ class AdvancedCreateFragment : Fragment() {
                 if (maxLength > 0) arrayOf(android.text.InputFilter.LengthFilter(maxLength)) else arrayOf()
             editTextData.filters = filters
             dataInputLayout.error = null
+
+            if (selectedType.format == BarcodeFormat.QR_CODE) {
+                buttonSelectImage.visibility = View.VISIBLE
+            } else {
+                buttonSelectImage.visibility = View.GONE
+                selectedLogo = null
+            }
         }
     }
 
@@ -117,7 +138,7 @@ class AdvancedCreateFragment : Fragment() {
         }
 
         buttonSelectColor.setOnClickListener {
-            showColorPickerDialog()
+            showColorPicker()
         }
 
         buttonGenerate.setOnClickListener {
@@ -125,40 +146,88 @@ class AdvancedCreateFragment : Fragment() {
         }
     }
 
-    private fun requestImagePermissions() {
-        val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
-        } else {
-            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+    private fun showColorPicker() {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_color_picker, null)
+        val viewSelectedColor: View = dialogView.findViewById(R.id.viewSelectedColor)
+        val sliderHue: Slider = dialogView.findViewById(R.id.sliderHue)
+        val editTextHex: TextInputEditText = dialogView.findViewById(R.id.editTextHex)
+
+        var isUpdating = false
+
+        fun updateColorFromHSV(hue: Float) {
+            if (isUpdating) return
+            isUpdating = true
+            val hsv = floatArrayOf(hue, 1f, 1f)
+            currentColor = Color.HSVToColor(hsv)
+            viewSelectedColor.setBackgroundColor(currentColor)
+            editTextHex.setText(String.format("#%06X", 0xFFFFFF and currentColor))
+            isUpdating = false
         }
-        requestPermissions.launch(permissions)
+
+        fun updateColorFromHex(hex: String) {
+            if (isUpdating) return
+            isUpdating = true
+            try {
+                val color = Color.parseColor(if (hex.startsWith("#")) hex else "#$hex")
+                currentColor = color
+                viewSelectedColor.setBackgroundColor(currentColor)
+                
+                val hsv = FloatArray(3)
+                Color.colorToHSV(currentColor, hsv)
+                sliderHue.value = hsv[0]
+            } catch (e: Exception) {
+                // Ignore invalid hex
+            }
+            isUpdating = false
+        }
+
+        // Initialize
+        val initialHsv = FloatArray(3)
+        Color.colorToHSV(currentColor, initialHsv)
+        sliderHue.value = initialHsv[0]
+        viewSelectedColor.setBackgroundColor(currentColor)
+        editTextHex.setText(String.format("#%06X", 0xFFFFFF and currentColor))
+
+        sliderHue.addOnChangeListener { _, value, _ ->
+            updateColorFromHSV(value)
+        }
+
+        editTextHex.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s?.length == 7 || s?.length == 6) {
+                    updateColorFromHex(s.toString())
+                }
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.select_code_color)
+            .setView(dialogView)
+            .setPositiveButton(R.string.save) { _, _ ->
+                colorPreview.setColorFilter(currentColor)
+            }
+            .setNegativeButton(R.string.delete_negative, null)
+            .show()
+    }
+
+    private fun requestImagePermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            requestPermissions.launch(arrayOf(
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+            ))
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions.launch(arrayOf(Manifest.permission.READ_MEDIA_IMAGES))
+        } else {
+            requestPermissions.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
+        }
     }
 
     private fun selectImageFromGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         imagePickerLauncher.launch(intent)
-    }
-
-    private fun showColorPickerDialog() {
-        val colors = listOf(
-            Color.BLACK to getString(R.string.black),
-            Color.BLUE to getString(R.string.blue),
-            Color.RED to getString(R.string.red),
-            Color.GREEN to getString(R.string.green),
-            Color.MAGENTA to getString(R.string.magenta),
-            Color.CYAN to getString(R.string.cyan),
-            Color.DKGRAY to getString(R.string.dark_gray)
-        )
-
-        val colorNames = colors.map { it.second }.toTypedArray()
-
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.select_code_color)
-            .setItems(colorNames) { _, which ->
-                currentColor = colors[which].first
-                colorPreview.setColorFilter(currentColor)
-            }
-            .show()
     }
 
     private fun isDataLengthValid(data: String, barcode: Barcode): Boolean {

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.hardbug.escanerqr.R
 import com.hardbug.escanerqr.models.ImageCode
+import androidx.core.net.toUri
 
 class QrCodeAdapter(
     private val onDeleteClick: (ImageCode) -> Unit,
@@ -37,8 +38,8 @@ class QrCodeAdapter(
             try {
                 ivQrCode.setImageDrawable(null)
 
-                val uri = Uri.parse(item.urlPath)
-                if (uri.scheme == "file") {
+                val uri = item.urlPath.toUri()
+                if (uri.scheme.equals("file")) {
                     ivQrCode.setImageURI(uri)
                 } else {
                     ivQrCode.setImageURI(uri)

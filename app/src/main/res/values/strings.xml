@@ -120,4 +120,8 @@
     <string name="title_create">Crear QR</string>
     <string name="title_advanced_create">Configuración Avanzada</string>
     <string name="title_customize">Personalizar Código</string>
+    <string name="verde">Verde</string>
+    <string name="azul">Azul</string>
+    <string name="rojo">Rojo</string>
+    <string name="logo_seleccionado_correctamente">Logo seleccionado correctamente</string>
 </resources>

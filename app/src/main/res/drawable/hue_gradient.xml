@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:type="linear"
+        android:startColor="#FF0000"
+        android:centerColor="#00FF00"
+        android:endColor="#FF0000"
+        android:angle="0" />
+    <!-- Note: Simple XML gradients only support 3 colors. For a full spectrum,
+         we'll handle it better in code or use multiple views if needed,
+         but for a basic "HTML-like" feel, Red-Green-Blue-Red is a good start.
+         Actually, let's use a more complex one if possible or just handle it in the slider logic. -->
+</shape>

@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.hardbug.escanerqr.ImageCodeDao
 import com.hardbug.escanerqr.models.ImageCode
 
-@Database(entities = [ImageCode::class], version = 1, exportSchema = false)
+@Database(entities = [ImageCode::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun imageCodeDao(): ImageCodeDao
 

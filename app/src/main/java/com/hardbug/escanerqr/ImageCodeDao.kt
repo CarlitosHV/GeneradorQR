@@ -15,7 +15,7 @@ interface ImageCodeDao {
     @Query("SELECT * FROM image_codes WHERE imageCodeUuid = :uuid")
     suspend fun getImageCodeById(uuid: String): ImageCode?
 
-    @Query("SELECT * FROM image_codes ORDER BY name ASC")
+    @Query("SELECT * FROM image_codes ORDER BY createdAt DESC")
     fun getAllImageCodes(): Flow<List<ImageCode>>
 
     @Query("DELETE FROM image_codes WHERE imageCodeUuid = :uuid")
