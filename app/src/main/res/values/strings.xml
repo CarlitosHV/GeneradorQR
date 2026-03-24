@@ -124,4 +124,21 @@
     <string name="azul">Azul</string>
     <string name="rojo">Rojo</string>
     <string name="logo_seleccionado_correctamente">Logo seleccionado correctamente</string>
+
+    <!-- Templates -->
+    <string name="template_wifi_title">Red WiFi</string>
+    <string name="template_wifi_desc">Comparte tu WiFi fácilmente</string>
+    <string name="template_contact_title">Contacto (vCard)</string>
+    <string name="template_contact_desc">Tu información de contacto</string>
+    <string name="title_wifi_create">Crear QR WiFi</string>
+    <string name="title_contact_create">Crear QR Contacto</string>
+
+    <string name="wifi_ssid">Nombre de la red (SSID)</string>
+    <string name="wifi_password">Contraseña</string>
+    <string name="wifi_security">Tipo de seguridad</string>
+
+    <string name="contact_name">Nombre completo</string>
+    <string name="contact_phone">Teléfono</string>
+    <string name="contact_email">Email</string>
+    <string name="contact_org">Empresa/Organización</string>
 </resources>
