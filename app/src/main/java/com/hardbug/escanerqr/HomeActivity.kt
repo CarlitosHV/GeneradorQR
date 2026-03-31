@@ -1,18 +1,24 @@
 package com.hardbug.escanerqr
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.hardbug.escanerqr.views.CameraFragment
 import com.hardbug.escanerqr.views.CreateFragment
 import com.hardbug.escanerqr.views.HomeFragment
 import com.hardbug.escanerqr.views.AdvancedCreateFragment
 import com.hardbug.escanerqr.views.CustomizeCode
+import androidx.core.net.toUri
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var bottomNavigationView: BottomNavigationView
@@ -24,7 +30,7 @@ class HomeActivity : AppCompatActivity() {
 
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-        
+
         if (savedInstanceState == null) {
             replaceFragment(HomeFragment())
         }
@@ -55,7 +61,36 @@ class HomeActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_help -> {
+                showHelpDialog()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun showHelpDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_help, null)
+        val tvGithubLink = dialogView.findViewById<TextView>(R.id.tvGithubLink)
+        
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setView(dialogView)
+            .create()
+
+        tvGithubLink.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW,
+                getString(R.string.https_github_com_carlitoshv).toUri())
+            startActivity(intent)
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     fun replaceFragment(fragment: Fragment, addToBackStack: Boolean = false) {
@@ -83,16 +118,6 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun updateNavigationState(fragment: Fragment?) {
-        val title = when (fragment) {
-            is HomeFragment -> getString(R.string.title_home)
-            is CameraFragment -> getString(R.string.title_scan)
-            is CreateFragment -> getString(R.string.title_create)
-            is AdvancedCreateFragment -> getString(R.string.title_advanced_create)
-            is CustomizeCode -> getString(R.string.title_customize)
-            else -> getString(R.string.app_name)
-        }
-        supportActionBar?.title = title
-
         if (fragment is AdvancedCreateFragment || fragment is CustomizeCode) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             toolbar.setNavigationOnClickListener { onBackPressed() }

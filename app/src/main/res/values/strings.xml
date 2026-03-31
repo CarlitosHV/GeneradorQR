@@ -39,7 +39,8 @@
     </string>
     <string name="escanear">Escanear</string>
     <string name="crear_qr">Crear QR</string>
-    <string name="creator">Made by: Carlos Hernández</string>
+    <string name="created_by">Creada y mantenida por:</string>
+    <string name="creator">Carlos Hernández</string>
     <string name="Inicio">Inicio</string>
     <string name="Scan">Escanear</string>
     <string name="Create">Crear</string>
@@ -114,7 +115,6 @@
     <string name="error_format_mismatch">El formato para %1$s requiere exactamente %2$d caracteres (tienes %3$d)</string>
     <string name="error_sharing_code">Error al compartir el código</string>
 
-    <!-- Títulos de Toolbar -->
     <string name="title_home">Inicio</string>
     <string name="title_scan">Escanear Código</string>
     <string name="title_create">Crear QR</string>
@@ -124,4 +124,9 @@
     <string name="azul">Azul</string>
     <string name="rojo">Rojo</string>
     <string name="logo_seleccionado_correctamente">Logo seleccionado correctamente</string>
+    <string name="no_results">No se encontraron resultados</string>
+    <string name="buscar_codigos">Buscar códigos...</string>
+    <string name="mis_codigos">Mis códigos</string>
+    <string name="https_github_com_carlitoshv">https://github.com/CarlitosHV</string>
+    <string name="ayuda">Ayuda</string>
 </resources>
