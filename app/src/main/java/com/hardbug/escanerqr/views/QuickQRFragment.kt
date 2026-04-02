@@ -3,6 +3,8 @@ package com.hardbug.escanerqr.views
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +29,9 @@ class QuickQRFragment : Fragment() {
     private lateinit var editTextData: TextInputEditText
     private lateinit var editTextName: TextInputEditText
     private lateinit var buttonGenerate: MaterialButton
+    private lateinit var cardPreview: View
+    private lateinit var imagePreview: ImageView
+    private var currentPreview: Bitmap? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,12 +43,43 @@ class QuickQRFragment : Fragment() {
         editTextData = view.findViewById(R.id.editTextData)
         editTextName = view.findViewById(R.id.editTextName)
         buttonGenerate = view.findViewById(R.id.buttonGenerate)
+        cardPreview = view.findViewById(R.id.cardPreview)
+        imagePreview = view.findViewById(R.id.imagePreview)
 
+        setupListeners()
+
+        return view
+    }
+
+    private fun setupListeners() {
         buttonGenerate.setOnClickListener {
             generateAndNavigate()
         }
 
-        return view
+        editTextData.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                updatePreview(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
+    private fun updatePreview(data: String) {
+        if (data.isBlank()) {
+            cardPreview.visibility = View.GONE
+            currentPreview = null
+            return
+        }
+
+        val bitmap = generateQRCode(data, 300)
+        bitmap?.let {
+            currentPreview = it
+            imagePreview.setImageBitmap(it)
+            cardPreview.visibility = View.VISIBLE
+        } ?: run {
+            cardPreview.visibility = View.GONE
+        }
     }
 
     private fun generateAndNavigate() {
@@ -59,7 +95,7 @@ class QuickQRFragment : Fragment() {
             return
         }
 
-        val bitmap = generateQRCode(data)
+        val bitmap = generateQRCode(data, 512)
         bitmap?.let {
             codeViewModel.setGeneratedCode(it)
             codeViewModel.setName(name)
@@ -67,9 +103,8 @@ class QuickQRFragment : Fragment() {
         } ?: showSnackbar(getString(R.string.error_generating_code))
     }
 
-    private fun generateQRCode(data: String): Bitmap? {
+    private fun generateQRCode(data: String, size: Int): Bitmap? {
         return try {
-            val size = 512
             val bitMatrix = QRCodeWriter().encode(data, BarcodeFormat.QR_CODE, size, size)
             val bitmap = createBitmap(size, size)
 
@@ -80,7 +115,6 @@ class QuickQRFragment : Fragment() {
             }
             bitmap
         } catch (e: WriterException) {
-            e.printStackTrace()
             null
         }
     }

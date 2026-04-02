@@ -129,4 +129,10 @@
     <string name="mis_codigos">Mis códigos</string>
     <string name="https_github_com_carlitoshv">https://github.com/CarlitosHV</string>
     <string name="ayuda">Ayuda</string>
+    <string name="gradient_type">Tipo de degradado</string>
+    <string name="flat">Plano</string>
+    <string name="diagonal">Diagonal</string>
+    <string name="radial">Circular (Centro)</string>
+    <string name="select_gradient_color">Color secundario (Degradado)</string>
+    <string name="hex">HEX</string>
 </resources>

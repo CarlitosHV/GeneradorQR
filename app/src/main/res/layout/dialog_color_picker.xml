@@ -28,8 +28,7 @@
         android:stepSize="1"
         app:trackHeight="12dp"
         app:trackColorActive="@android:color/transparent"
-        app:trackColorInactive="@android:color/transparent"
-        android:background="@drawable/hue_gradient" />
+        app:trackColorInactive="@android:color/transparent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayoutHex"
@@ -37,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:hint="HEX"
+        android:hint="@string/hex"
         app:startIconDrawable="@drawable/baseline_settings_24">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextHex"
