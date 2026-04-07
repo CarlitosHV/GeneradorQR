@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,18 +9,76 @@
 
     <androidx.camera.view.PreviewView
         android:id="@+id/previewView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Capa de oscurecimiento exterior -->
+    <View
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="#44000000" />
+
+    <!-- Viewfinder (Mira central) -->
+    <View
+        android:id="@+id/viewfinder"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:background="@drawable/viewfinder_border"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnFlash"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        app:icon="@drawable/ic_flash_off"
+        app:iconSize="28dp"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:cornerRadius="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnGallery"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="32dp"
+        app:icon="@drawable/ic_launcher_foreground"
+        app:iconSize="28dp"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:cornerRadius="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/barcodeResult"
-        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="@string/Scan"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/circle_background"
+        android:backgroundTint="#CC000000"
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="12dp"
         android:textColor="@android:color/white"
         android:textSize="16sp"
-        android:background="@android:color/black"
-        android:padding="8dp"/>
-</RelativeLayout>
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/viewfinder"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Resultado del escaneo"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

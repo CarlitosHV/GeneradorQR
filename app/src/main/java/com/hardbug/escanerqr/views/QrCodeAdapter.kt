@@ -34,15 +34,24 @@ class QrCodeAdapter(
         fun bind(item: ImageCode) {
             tvQrName.text = item.name
 
-            try {
-                ivQrCode.setImageDrawable(null)
-
-                val uri = item.urlPath.toUri()
-                if (uri.scheme.equals("file")) {
-                    ivQrCode.setImageURI(uri)
+            if (item.metaData == "SCANNED") {
+                ivQrCode.setImageResource(R.drawable.ic_barcode)
+                ivQrCode.setPadding(12, 12, 12, 12)
+                ivQrCode.alpha = 0.7f
+            } else {
+                ivQrCode.setPadding(0, 0, 0, 0)
+                ivQrCode.alpha = 1.0f
+                try {
+                    ivQrCode.setImageDrawable(null)
+                    val uri = item.urlPath.toUri()
+                    if (uri.scheme == "file") {
+                        ivQrCode.setImageURI(uri)
+                    } else {
+                        ivQrCode.setImageResource(R.drawable.baseline_qr_code_24)
+                    }
+                } catch (e: Exception) {
+                    ivQrCode.setImageResource(R.drawable.baseline_qr_code_24)
                 }
-            } catch (e: Exception) {
-                ivQrCode.setImageResource(R.drawable.baseline_qr_code_24)
             }
 
             itemView.setOnClickListener { onItemClick(item) }
