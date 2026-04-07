@@ -84,10 +84,8 @@ class AdvancedCreateFragment : Fragment() {
             if (result.resultCode == android.app.Activity.RESULT_OK) {
                 result.data?.data?.let { uri ->
                     selectedLogo = uriToBitmap(uri)
-                    if (selectedLogo != null) {
-                        showSnackbar(getString(R.string.logo_seleccionado_correctamente))
-                        triggerPreviewUpdate()
-                    }
+                    showSnackbar(getString(R.string.logo_seleccionado_correctamente))
+                    triggerPreviewUpdate()
                 }
             }
         }
@@ -125,8 +123,8 @@ class AdvancedCreateFragment : Fragment() {
     }
 
     private fun setupBarcodeTypeSpinner() {
-        val barCodeTypes = BarcodeTypes.barCodes.map { it.name }
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, barCodeTypes)
+        val barCodeTypeNames = BarcodeTypes.barCodes.map { getString(it.nameResId) }
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, barCodeTypeNames)
         spinnerBarCodeTypes.setAdapter(adapter)
 
         spinnerBarCodeTypes.setOnItemClickListener { _, _, position, _ ->
@@ -177,7 +175,7 @@ class AdvancedCreateFragment : Fragment() {
         val data = editTextData.text.toString()
         val selectedTypeName = spinnerBarCodeTypes.text.toString()
         val selectedGradient = spinnerGradientType.text.toString()
-        val barcodeType = BarcodeTypes.barCodes.find { it.name == selectedTypeName }
+        val barcodeType = BarcodeTypes.barCodes.find { getString(it.nameResId) == selectedTypeName }
 
         if (data.isBlank() || barcodeType == null) {
             cardPreview.visibility = View.GONE
@@ -315,7 +313,7 @@ class AdvancedCreateFragment : Fragment() {
         val selectedTypeName = spinnerBarCodeTypes.text.toString()
         val selectedGradient = spinnerGradientType.text.toString()
 
-        val barcodeType = BarcodeTypes.barCodes.find { it.name == selectedTypeName }
+        val barcodeType = BarcodeTypes.barCodes.find { getString(it.nameResId) == selectedTypeName }
 
         if (data.isEmpty()) {
             dataInputLayout.error = getString(R.string.error_empty_data)
@@ -324,7 +322,7 @@ class AdvancedCreateFragment : Fragment() {
 
         barcodeType?.let {
             if (!isDataLengthValid(data, it)) {
-                dataInputLayout.error = getString(R.string.error_format_mismatch, it.name, it.length, data.length)
+                dataInputLayout.error = getString(R.string.error_format_mismatch, getString(it.nameResId), it.length, data.length)
                 return
             }
         }

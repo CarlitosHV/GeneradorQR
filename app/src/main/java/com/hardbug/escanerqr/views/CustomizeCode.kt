@@ -31,7 +31,7 @@ class CustomizeCode : Fragment() {
     private lateinit var imageViewCode: ImageView
     private lateinit var buttonSave: MaterialButton
     private lateinit var buttonShare: MaterialButton
-    private var nameCode: String = "QR_Code"
+    private var nameCode: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,6 +39,7 @@ class CustomizeCode : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_customize_code, container, false)
+        nameCode = getString(R.string.default_qr_name)
         setupViewModel()
         setupViews(view)
         return view
@@ -132,7 +133,7 @@ class CustomizeCode : Fragment() {
                 startActivity(Intent.createChooser(shareIntent, getString(R.string.share_code)))
             } catch (e: Exception) {
                 e.printStackTrace()
-                showSnackbar("Error al compartir el código")
+                showSnackbar(getString(R.string.error_sharing_code))
             }
         }
     }

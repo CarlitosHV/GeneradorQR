@@ -23,7 +23,7 @@
             android:textStyle="bold"
             android:textColor="?attr/colorOnSurface"
             android:layout_marginBottom="16dp"
-            tools:text="Mi código QR" />
+            tools:text="@string/mi_codigo" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="wrap_content"

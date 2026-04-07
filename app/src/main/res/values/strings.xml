@@ -135,4 +135,17 @@
     <string name="radial">Circular (Centro)</string>
     <string name="select_gradient_color">Color secundario (Degradado)</string>
     <string name="hex">HEX</string>
+
+    <string name="barcode_upca">UPC-A</string>
+    <string name="barcode_upce">UPC-E</string>
+    <string name="barcode_ean8">EAN-8</string>
+    <string name="barcode_ean13">EAN-13</string>
+    <string name="barcode_code39">Code 39</string>
+    <string name="barcode_code128">Code 128</string>
+    <string name="barcode_itf">ITF</string>
+    <string name="barcode_codabar">Codabar</string>
+    <string name="barcode_qrcode">Código QR</string>
+    <string name="default_qr_name">Código_QR</string>
+    <string name="mi_codigo_wifi">Mi código WiFi</string>
+    <string name="mi_codigo">Mi código</string>
 </resources>
