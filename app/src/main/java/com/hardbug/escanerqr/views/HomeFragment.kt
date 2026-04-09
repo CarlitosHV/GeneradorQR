@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
@@ -23,6 +24,7 @@ import com.hardbug.escanerqr.database.AppDatabase
 import com.hardbug.escanerqr.models.ImageCode
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.io.File
 
 class HomeFragment : Fragment() {
 
@@ -99,10 +101,15 @@ class HomeFragment : Fragment() {
         val btnDetailClose: MaterialButton = dialogView.findViewById(R.id.btnDetailClose)
 
         tvDetailName.text = item.name
-        try {
-            ivDetailQr.setImageURI(Uri.parse(item.urlPath))
-        } catch (e: Exception) {
-            ivDetailQr.setImageResource(R.drawable.baseline_qr_code_24)
+        
+        if (item.metaData == "SCANNED") {
+            ivDetailQr.setImageResource(R.drawable.ic_barcode)
+        } else {
+            try {
+                ivDetailQr.setImageURI(Uri.parse(item.urlPath))
+            } catch (e: Exception) {
+                ivDetailQr.setImageResource(R.drawable.baseline_qr_code_24)
+            }
         }
 
         val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.CustomMaterialAlertDialog)
@@ -120,16 +127,42 @@ class HomeFragment : Fragment() {
     }
 
     private fun shareImage(item: ImageCode) {
-        try {
+        if (item.metaData == "SCANNED") {
+            // Compartir como texto si es un escaneo
             val shareIntent = Intent().apply {
                 action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_STREAM, Uri.parse(item.urlPath))
-                type = "image/png"
-                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                putExtra(Intent.EXTRA_TEXT, item.urlPath)
+                type = "text/plain"
             }
             startActivity(Intent.createChooser(shareIntent, getString(R.string.share_code)))
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } else {
+            // Compartir como archivo usando FileProvider para códigos generados
+            try {
+                val fileUri = Uri.parse(item.urlPath)
+                val fileName = fileUri.lastPathSegment ?: "qr_code.png"
+                val file = File(requireContext().filesDir, "codes/$fileName")
+                
+                if (file.exists()) {
+                    val contentUri = FileProvider.getUriForFile(
+                        requireContext(),
+                        "com.hardbug.escanerqr.fileprovider",
+                        file
+                    )
+                    
+                    val shareIntent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_STREAM, contentUri)
+                        type = "image/png"
+                        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    }
+                    startActivity(Intent.createChooser(shareIntent, getString(R.string.share_code)))
+                } else {
+                    Snackbar.make(requireView(), "El archivo no existe", Snackbar.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Snackbar.make(requireView(), "Error al compartir: ${e.message}", Snackbar.LENGTH_SHORT).show()
+            }
         }
     }
 

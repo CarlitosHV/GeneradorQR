@@ -9,8 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.hardbug.escanerqr.R
@@ -19,9 +21,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.hardbug.escanerqr.HomeActivity
 import com.hardbug.escanerqr.database.AppDatabase
 import com.hardbug.escanerqr.models.ImageCode
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
@@ -79,19 +81,18 @@ class CustomizeCode : Fragment() {
         val currentContext = context?.applicationContext ?: return
         val currentNameCode = nameCode
 
-        CoroutineScope(Dispatchers.IO).launch {
-            var success = false
-            try {
-                val directory = File(currentContext.filesDir, "codes")
-                if (!directory.exists()) directory.mkdirs()
+        lifecycleScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                try {
+                    val directory = File(currentContext.filesDir, "codes")
+                    if (!directory.exists()) directory.mkdirs()
 
-                val file = File(directory, "QR_${UUID.randomUUID()}.png")
-                
-                FileOutputStream(file).use { out ->
-                    success = bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
-                }
+                    val file = File(directory, "QR_${UUID.randomUUID()}.png")
+                    
+                    FileOutputStream(file).use { out ->
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+                    }
 
-                if (success) {
                     val imageCode = ImageCode().apply {
                         imageCodeUuid = UUID.randomUUID().toString()
                         this.name = currentNameCode
@@ -100,30 +101,43 @@ class CustomizeCode : Fragment() {
                     }
                     val db = AppDatabase.getDatabase(currentContext)
                     db.imageCodeDao().insertImageCode(imageCode)
+                    true
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    false
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                success = false
             }
 
-            launch(Dispatchers.Main) {
-                if (success) {
-                    showSnackbar(getString(R.string.image_saved_successfully))
-                    navigateToHome()
-                } else {
-                    showSnackbar(getString(R.string.error_saving_image))
-                }
+            if (result) {
+                showSnackbar(getString(R.string.image_saved_successfully))
+                navigateToHome()
+            } else {
+                showSnackbar(getString(R.string.error_saving_image))
             }
         }
     }
 
     private fun shareImage() {
-        codeViewModel.generatedCode.value?.let { bitmap ->
-            try {
-                val path = android.provider.MediaStore.Images.Media.insertImage(
-                    requireContext().contentResolver, bitmap, "Share_QR_${System.currentTimeMillis()}", null
-                )
-                val uri = Uri.parse(path)
+        val bitmap = codeViewModel.generatedCode.value ?: return
+        val context = requireContext()
+
+        lifecycleScope.launch {
+            val uri = withContext(Dispatchers.IO) {
+                try {
+                    val cachePath = File(context.cacheDir, "images")
+                    cachePath.mkdirs()
+                    val file = File(cachePath, "shared_qr.png")
+                    FileOutputStream(file).use { stream ->
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    }
+                    FileProvider.getUriForFile(context, "com.hardbug.escanerqr.fileprovider", file)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    null
+                }
+            }
+
+            if (uri != null) {
                 val shareIntent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(Intent.EXTRA_STREAM, uri)
@@ -131,8 +145,7 @@ class CustomizeCode : Fragment() {
                     flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
                 }
                 startActivity(Intent.createChooser(shareIntent, getString(R.string.share_code)))
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } else {
                 showSnackbar(getString(R.string.error_sharing_code))
             }
         }
