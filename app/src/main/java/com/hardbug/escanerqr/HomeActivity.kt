@@ -31,10 +31,6 @@ class HomeActivity : AppCompatActivity() {
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        if (savedInstanceState == null) {
-            replaceFragment(HomeFragment())
-        }
-
         bottomNavigationView = findViewById(R.id.bottom_navigation)
 
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
@@ -55,8 +51,34 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
+        if (savedInstanceState == null) {
+            handleIntent(intent)
+        }
+
         supportFragmentManager.addOnBackStackChangedListener {
             updateNavigationState(supportFragmentManager.findFragmentById(R.id.content))
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        when (intent?.action) {
+            "ACTION_SCAN" -> {
+                bottomNavigationView.selectedItemId = R.id.page_scan
+            }
+            "ACTION_CREATE" -> {
+                bottomNavigationView.selectedItemId = R.id.page_create
+            }
+            else -> {
+                if (supportFragmentManager.findFragmentById(R.id.content) == null) {
+                    bottomNavigationView.selectedItemId = R.id.page_home
+                }
+            }
         }
     }
 

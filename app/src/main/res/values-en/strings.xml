@@ -148,4 +148,8 @@
     <string name="default_qr_name">QR_Code</string>
     <string name="mi_codigo_wifi">My wifi code</string>
     <string name="mi_codigo">My code</string>
+    <string name="scan_result">Scanner results</string>
+    <string name="copy">Copy</string>
+    <string name="open_link">Open link</string>
+    <string name="text_copied">Copied to clipboard</string>
 </resources>

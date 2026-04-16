@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <files-path name="my_images" path="codes/" />
-    <cache-path name="my_cache_images" path="images/" />
-    <external-path name="my_images_external" path="Android/data/com.hardbug.escanerqr/files/codes/" />
+    <files-path name="internal_files" path="." />
+    <cache-path name="internal_cache" path="." />
+    <external-path name="external_files" path="." />
 </paths>
