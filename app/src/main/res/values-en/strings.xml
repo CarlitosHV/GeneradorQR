@@ -152,4 +152,8 @@
     <string name="copy">Copy</string>
     <string name="open_link">Open link</string>
     <string name="text_copied">Copied to clipboard</string>
+    <string name="no_favorites_yet">No favorites yet</string>
+    <string name="added_to_favorites">Added to favorites</string>
+    <string name="removed_from_favorites">Removed from favorites</string>
+    <string name="favorites">My favorites</string>
 </resources>

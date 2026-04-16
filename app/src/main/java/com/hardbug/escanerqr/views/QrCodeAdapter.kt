@@ -29,33 +29,34 @@ class QrCodeAdapter(
     inner class QrViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val ivQrCode: ImageView = itemView.findViewById(R.id.ivQrCode)
         private val tvQrName: TextView = itemView.findViewById(R.id.tvQrName)
-        private val btnDelete: View = itemView.findViewById(R.id.btnDelete)
+        private val ivFavoriteStatus: ImageView = itemView.findViewById(R.id.ivFavoriteStatus)
 
         fun bind(item: ImageCode) {
             tvQrName.text = item.name
+            
+            ivQrCode.setPadding(0, 0, 0, 0)
+            ivQrCode.alpha = 1.0f
+            ivQrCode.setImageDrawable(null)
 
-            if (item.metaData == "SCANNED") {
-                ivQrCode.setImageResource(R.drawable.ic_barcode)
-                ivQrCode.setPadding(12, 12, 12, 12)
-                ivQrCode.alpha = 0.7f
+            val uri = item.urlPath.toUri()
+            val isFile = uri.scheme == "file"
+
+            if (isFile) {
+                ivQrCode.setImageURI(uri)
             } else {
-                ivQrCode.setPadding(0, 0, 0, 0)
-                ivQrCode.alpha = 1.0f
-                try {
-                    ivQrCode.setImageDrawable(null)
-                    val uri = item.urlPath.toUri()
-                    if (uri.scheme == "file") {
-                        ivQrCode.setImageURI(uri)
-                    } else {
-                        ivQrCode.setImageResource(R.drawable.baseline_qr_code_24)
-                    }
-                } catch (e: Exception) {
+                if (item.metaData == "SCANNED") {
+                    ivQrCode.setImageResource(R.drawable.ic_barcode)
+                    ivQrCode.setPadding(12, 12, 12, 12)
+                    ivQrCode.alpha = 0.7f
+                } else {
                     ivQrCode.setImageResource(R.drawable.baseline_qr_code_24)
                 }
             }
 
+            ivFavoriteStatus.visibility = if (item.isFavorite) View.VISIBLE else View.GONE
+            ivFavoriteStatus.setImageResource(R.drawable.ic_action_favorite)
+
             itemView.setOnClickListener { onItemClick(item) }
-            btnDelete.setOnClickListener { onDeleteClick(item) }
         }
     }
 

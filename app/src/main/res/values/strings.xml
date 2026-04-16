@@ -153,4 +153,8 @@
     <string name="copy">Copiar</string>
     <string name="open_link">Abrir enlace</string>
     <string name="text_copied">Texto copiado al portapapeles</string>
+    <string name="no_favorites_yet">Sin favoritos</string>
+    <string name="added_to_favorites">Agregado a favoritos</string>
+    <string name="removed_from_favorites">Eliminado de favoritos</string>
+    <string name="favorites">Mis favoritos</string>
 </resources>

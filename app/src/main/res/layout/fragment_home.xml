@@ -7,17 +7,39 @@
     android:background="?attr/colorSurface"
     tools:context=".views.HomeFragment">
 
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        app:tabIndicatorFullWidth="false"
+        app:tabSelectedTextColor="?attr/colorPrimary"
+        app:tabTextColor="?attr/colorOnSurfaceVariant"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mis_codigos" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/favorites" />
+
+    </com.google.android.material.tabs.TabLayout>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayoutSearch"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:hint="@string/buscar_codigos"
-        android:elevation="5dp"
+        android:elevation="2dp"
         app:startIconDrawable="@drawable/ic_search"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/tabLayout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextSearch"
@@ -25,18 +47,6 @@
             android:layout_height="wrap_content"
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
-
-    <TextView
-        android:id="@+id/tvRecentTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/mis_codigos"
-        android:textSize="18sp"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textInputLayoutSearch" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvRecentCodes"
@@ -49,7 +59,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvRecentTitle"
+        app:layout_constraintTop_toBottomOf="@id/textInputLayoutSearch"
         tools:listitem="@layout/item_qr_code" />
 
     <LinearLayout
@@ -62,7 +72,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvRecentTitle">
+        app:layout_constraintTop_toBottomOf="@id/textInputLayoutSearch">
 
         <ImageView
             android:layout_width="120dp"
@@ -72,6 +82,7 @@
             app:tint="?attr/colorOnSurface" />
 
         <TextView
+            android:id="@+id/tvEmptyMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"

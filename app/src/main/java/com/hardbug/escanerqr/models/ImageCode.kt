@@ -10,5 +10,6 @@ data class ImageCode(
     var name: String = "",
     var urlPath: String = "",
     var metaData: String = "",
+    var isFavorite: Boolean = false,
     var createdAt: Long = System.currentTimeMillis()
 )
