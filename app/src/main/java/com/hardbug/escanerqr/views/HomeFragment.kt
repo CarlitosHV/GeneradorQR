@@ -1,5 +1,7 @@
 package com.hardbug.escanerqr.views
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Canvas
@@ -17,7 +19,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -36,7 +42,6 @@ import java.io.File
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
-import androidx.core.net.toUri
 
 class HomeFragment : Fragment() {
 
@@ -69,6 +74,13 @@ class HomeFragment : Fragment() {
         setupTabs()
         setupSearch()
         observeCodes()
+
+        ViewCompat.setOnApplyWindowInsetsListener(rvRecentCodes) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val bottomNavHeight = resources.getDimensionPixelSize(R.dimen.fab_margin) * 4
+            v.updatePadding(bottom = insets.bottom + bottomNavHeight)
+            windowInsets
+        }
         
         return view
     }
@@ -214,12 +226,19 @@ class HomeFragment : Fragment() {
 
         tvDetailName.text = item.name
         
-        try {
-            ivDetailQr.setImageURI(Uri.parse(item.urlPath))
-        } catch (e: Exception) {
-            if (item.metaData == "SCANNED") {
-                ivDetailQr.setImageResource(R.drawable.ic_barcode)
-            } else {
+        val isScan = item.metaData == "CAMERA" || item.metaData == "GALLERY" || item.metaData == "SCANNED"
+
+        if (isScan) {
+            ivDetailQr.visibility = View.GONE
+            btnDetailShare.text = getString(R.string.copy)
+            btnDetailShare.setIconResource(R.drawable.ic_action_content_copy)
+        } else {
+            ivDetailQr.visibility = View.VISIBLE
+            btnDetailShare.text = getString(R.string.share)
+            btnDetailShare.setIconResource(R.drawable.ic_share)
+            try {
+                ivDetailQr.setImageURI(Uri.parse(item.urlPath))
+            } catch (e: Exception) {
                 ivDetailQr.setImageResource(R.drawable.baseline_qr_code_24)
             }
         }
@@ -231,43 +250,45 @@ class HomeFragment : Fragment() {
         btnDetailClose.setOnClickListener { dialog.dismiss() }
         
         btnDetailShare.setOnClickListener {
-            shareImage(item)
+            if (isScan) {
+                copyToClipboard(item.urlPath)
+            } else {
+                shareImage(item)
+            }
             dialog.dismiss()
         }
 
         dialog.show()
     }
 
+    private fun copyToClipboard(text: String) {
+        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("Scanned Text", text)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(requireContext(), R.string.text_copied, Toast.LENGTH_SHORT).show()
+    }
+
     private fun shareImage(item: ImageCode) {
-        if (item.metaData == "SCANNED" && !item.urlPath.startsWith("file")) {
-            val shareIntent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, item.urlPath)
-                type = "text/plain"
+        try {
+            val fileUri = Uri.parse(item.urlPath)
+            val file = if (fileUri.scheme == "file") {
+                File(fileUri.path!!)
+            } else {
+                val fileName = fileUri.lastPathSegment ?: "qr_code.png"
+                File(requireContext().filesDir, "codes/$fileName")
             }
-            startActivity(Intent.createChooser(shareIntent, getString(R.string.share_code)))
-        } else {
-            try {
-                val fileUri = Uri.parse(item.urlPath)
-                val file = if (fileUri.scheme == "file") {
-                    File(fileUri.path!!)
-                } else {
-                    val fileName = fileUri.lastPathSegment ?: "qr_code.png"
-                    File(requireContext().filesDir, "codes/$fileName")
+            
+            if (file.exists()) {
+                val contentUri = FileProvider.getUriForFile(requireContext(), "com.hardbug.escanerqr.fileprovider", file)
+                val shareIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_STREAM, contentUri)
+                    type = "image/png"
+                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
                 }
-                
-                if (file.exists()) {
-                    val contentUri = FileProvider.getUriForFile(requireContext(), "com.hardbug.escanerqr.fileprovider", file)
-                    val shareIntent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_STREAM, contentUri)
-                        type = "image/png"
-                        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    }
-                    startActivity(Intent.createChooser(shareIntent, getString(R.string.share_code)))
-                }
-            } catch (e: Exception) { e.printStackTrace() }
-        }
+                startActivity(Intent.createChooser(shareIntent, getString(R.string.share_code)))
+            }
+        } catch (e: Exception) { e.printStackTrace() }
     }
 
     private fun showDeleteConfirmation(item: ImageCode) {

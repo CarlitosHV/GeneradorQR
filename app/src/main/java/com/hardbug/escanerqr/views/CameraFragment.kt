@@ -7,7 +7,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
@@ -31,6 +30,9 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
@@ -94,6 +96,22 @@ class CameraFragment : Fragment() {
         
         setupFlashButton()
         setupGalleryButton()
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val navHeight = resources.getDimensionPixelSize(R.dimen.fab_margin) * 4
+            
+            val bottomMargin = insets.bottom + navHeight + resources.getDimensionPixelSize(R.dimen.fab_margin)
+            
+            btnFlash.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                this.bottomMargin = bottomMargin
+            }
+            btnGallery.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                this.bottomMargin = bottomMargin
+            }
+            
+            windowInsets
+        }
         
         return  view
     }
@@ -140,7 +158,7 @@ class CameraFragment : Fragment() {
                         val barcode = barcodes[0]
                         barcode.rawValue?.let { result ->
                             vibrate()
-                            saveToHistory(result)
+                            saveToHistory(result, "GALLERY")
                             showResultDialog(result)
                         }
                     } else {
@@ -176,7 +194,7 @@ class CameraFragment : Fragment() {
             val cameraProvider = cameraProviderFuture.get()
 
             val preview = Preview.Builder().build().also {
-                it.setSurfaceProvider(previewView.surfaceProvider)
+                it.surfaceProvider = previewView.surfaceProvider
             }
 
             val imageAnalysis = ImageAnalysis.Builder()
@@ -225,7 +243,7 @@ class CameraFragment : Fragment() {
                             isScanning = false
                             activity?.runOnUiThread {
                                 vibrate()
-                                saveToHistory(result)
+                                saveToHistory(result, "CAMERA")
                                 showResultDialog(result)
                             }
                         }
@@ -241,13 +259,13 @@ class CameraFragment : Fragment() {
         }
     }
 
-    private fun saveToHistory(content: String) {
+    private fun saveToHistory(content: String, origin: String) {
         val db = AppDatabase.getDatabase(requireContext())
         val scannedCode = ImageCode().apply {
             imageCodeUuid = UUID.randomUUID().toString()
-            name = if (content.length > 20) content.take(17) + "..." else content
+            name = content
             urlPath = content
-            metaData = "SCANNED"
+            metaData = origin
         }
         
         viewLifecycleOwner.lifecycleScope.launch {

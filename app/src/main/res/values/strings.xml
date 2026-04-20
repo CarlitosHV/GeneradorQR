@@ -157,4 +157,6 @@
     <string name="added_to_favorites">Agregado a favoritos</string>
     <string name="removed_from_favorites">Eliminado de favoritos</string>
     <string name="favorites">Mis favoritos</string>
+    <string name="scanned_from_camera">Escaneado desde cámara</string>
+    <string name="scanned_from_gallery">Escaneado desde galería</string>
 </resources>

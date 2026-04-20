@@ -1,37 +1,62 @@
 package com.hardbug.escanerqr
 
 import android.content.Intent
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.hardbug.escanerqr.views.AdvancedCreateFragment
 import com.hardbug.escanerqr.views.CameraFragment
 import com.hardbug.escanerqr.views.CreateFragment
-import com.hardbug.escanerqr.views.HomeFragment
-import com.hardbug.escanerqr.views.AdvancedCreateFragment
 import com.hardbug.escanerqr.views.CustomizeCode
-import androidx.core.net.toUri
+import com.hardbug.escanerqr.views.HomeFragment
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var toolbar: MaterialToolbar
+    private lateinit var appBarLayout: AppBarLayout
+    private lateinit var bottomNavCard: MaterialCardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
+        appBarLayout = findViewById(R.id.appBarLayout)
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         bottomNavigationView = findViewById(R.id.bottom_navigation)
+        bottomNavCard = findViewById(R.id.bottomNavCard)
+
+        ViewCompat.setOnApplyWindowInsetsListener(bottomNavigationView) { _, insets -> insets }
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_container)) { _, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            appBarLayout.updatePadding(top = insets.top)
+
+            bottomNavCard.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = insets.bottom + resources.getDimensionPixelSize(R.dimen.fab_margin)
+            }
+            
+            windowInsets
+        }
 
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {

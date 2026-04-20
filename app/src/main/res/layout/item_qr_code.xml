@@ -40,7 +40,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_action_favorite"
-                app:tint="?attr/colorOnPrimary" />
+                app:tint="?attr/colorOnTertiary" />
         </LinearLayout>
     </LinearLayout>
 
@@ -89,11 +89,28 @@
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:textColor="?attr/colorOnSurface"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:ellipsize="end"
+                android:maxLines="2"
                 app:layout_constraintEnd_toStartOf="@id/ivFavoriteStatus"
                 app:layout_constraintStart_toEndOf="@id/cardImage"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Mi código" />
+                app:layout_constraintBottom_toTopOf="@id/tvOriginLegend"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="@string/mi_codigo" />
+
+            <TextView
+                android:id="@+id/tvOriginLegend"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@id/tvQrName"
+                app:layout_constraintEnd_toEndOf="@id/tvQrName"
+                app:layout_constraintTop_toBottomOf="@id/tvQrName"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:text="@string/scanned_from_camera"
+                tools:visibility="visible" />
 
             <ImageView
                 android:id="@+id/ivFavoriteStatus"
