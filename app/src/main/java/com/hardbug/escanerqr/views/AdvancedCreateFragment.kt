@@ -225,8 +225,8 @@ class AdvancedCreateFragment : Fragment() {
         val horizontalInset = (16 * density).toInt()
         val verticalInset = (18 * density).toInt()
         sliderHue.background = InsetDrawable(hueGradient, horizontalInset, verticalInset, horizontalInset, verticalInset)
-        sliderHue.setTrackActiveTintList(android.content.res.ColorStateList.valueOf(Color.TRANSPARENT))
-        sliderHue.setTrackInactiveTintList(android.content.res.ColorStateList.valueOf(Color.TRANSPARENT))
+        sliderHue.trackActiveTintList = android.content.res.ColorStateList.valueOf(Color.TRANSPARENT)
+        sliderHue.trackInactiveTintList = android.content.res.ColorStateList.valueOf(Color.TRANSPARENT)
         sliderHue.trackHeight = (12 * density).toInt()
 
         var tempColor = if (isPrimary) currentColor else secondaryColor
