@@ -10,6 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -44,6 +47,14 @@ class CustomizeCode : Fragment() {
         nameCode = getString(R.string.default_qr_name)
         setupViewModel()
         setupViews(view)
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val navCardHeight = resources.getDimensionPixelSize(R.dimen.fab_margin) * 6
+            v.updatePadding(bottom = insets.bottom + navCardHeight)
+            windowInsets
+        }
+
         return view
     }
 

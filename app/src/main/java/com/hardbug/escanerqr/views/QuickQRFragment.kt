@@ -11,12 +11,16 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.set
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.zxing.BarcodeFormat
+import com.google.zxing.EncodeHintType
 import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
 import com.hardbug.escanerqr.HomeActivity
@@ -47,6 +51,13 @@ class QuickQRFragment : Fragment() {
         imagePreview = view.findViewById(R.id.imagePreview)
 
         setupListeners()
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val navCardHeight = resources.getDimensionPixelSize(R.dimen.fab_margin) * 6
+            v.updatePadding(bottom = insets.bottom + navCardHeight)
+            windowInsets
+        }
 
         return view
     }
@@ -105,7 +116,10 @@ class QuickQRFragment : Fragment() {
 
     private fun generateQRCode(data: String, size: Int): Bitmap? {
         return try {
-            val bitMatrix = QRCodeWriter().encode(data, BarcodeFormat.QR_CODE, size, size)
+            val hints = HashMap<EncodeHintType, Any>()
+            hints[EncodeHintType.CHARACTER_SET] = "UTF-8"
+            
+            val bitMatrix = QRCodeWriter().encode(data, BarcodeFormat.QR_CODE, size, size, hints)
             val bitmap = createBitmap(size, size)
 
             for (x in 0 until size) {

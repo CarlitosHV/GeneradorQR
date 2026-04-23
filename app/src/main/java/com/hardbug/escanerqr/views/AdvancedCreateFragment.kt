@@ -23,6 +23,9 @@ import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.graphics.scale
 import androidx.core.graphics.set
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.button.MaterialButton
@@ -32,6 +35,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.zxing.BarcodeFormat
+import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
 import com.hardbug.escanerqr.HomeActivity
 import com.hardbug.escanerqr.R
@@ -118,6 +122,13 @@ class AdvancedCreateFragment : Fragment() {
         setupBarcodeTypeSpinner()
         setupGradientTypeSpinner()
         setupListeners()
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val navCardHeight = resources.getDimensionPixelSize(R.dimen.fab_margin) * 6
+            v.updatePadding(bottom = insets.bottom + navCardHeight)
+            windowInsets
+        }
 
         return view
     }
@@ -360,6 +371,9 @@ class AdvancedCreateFragment : Fragment() {
     ): Bitmap? {
         return try {
             var content = data
+            val hints = HashMap<EncodeHintType, Any>()
+            hints[EncodeHintType.CHARACTER_SET] = "UTF-8"
+
             when (format) {
                 BarcodeFormat.EAN_13 -> if (content.length == 13) content = content.substring(0, 12)
                 BarcodeFormat.EAN_8 -> if (content.length == 8) content = content.substring(0, 7)
@@ -367,7 +381,7 @@ class AdvancedCreateFragment : Fragment() {
                 else -> {}
             }
 
-            val bitMatrix = MultiFormatWriter().encode(content, format, width, height)
+            val bitMatrix = MultiFormatWriter().encode(content, format, width, height, hints)
             val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
 
             for (x in 0 until width) {
