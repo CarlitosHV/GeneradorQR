@@ -6,115 +6,60 @@
         </shape>
     </item>
 
-    <item android:top="-50dp" android:left="-70dp" android:width="200dp" android:height="200dp">
+    <item android:top="-40dp" android:left="-50dp" android:width="120dp" android:height="120dp">
         <shape android:shape="oval">
-            <stroke android:width="14dp" android:color="#4CAF50" />
+            <stroke android:width="8dp" android:color="#4CAF50" />
             <solid android:color="#1A4CAF50" />
         </shape>
     </item>
 
-    <item android:gravity="end|top" android:top="-25dp" android:right="-45dp" android:width="150dp" android:height="150dp">
+    <item android:gravity="end|top" android:top="-20dp" android:right="-30dp" android:width="80dp" android:height="80dp">
         <shape android:shape="rectangle">
-            <stroke android:width="12dp" android:color="#2196F3" />
+            <stroke android:width="8dp" android:color="#2196F3" />
             <solid android:color="#1A2196F3" />
         </shape>
     </item>
 
-    <item android:gravity="center" android:width="180dp" android:height="32dp" android:top="15dp">
+    <item android:gravity="center_horizontal" android:width="100dp" android:height="16dp" android:top="12dp">
         <shape android:shape="rectangle">
             <solid android:color="#33FFEB3B" />
-            <corners android:radius="16dp" />
+            <corners android:radius="8dp" />
         </shape>
     </item>
 
     <item
         android:drawable="@drawable/ic_bug"
         android:gravity="start|top"
-        android:left="20dp"
-        android:top="10dp"
-        android:width="24dp"
-        android:height="24dp"
+        android:left="60dp"
+        android:top="5dp"
+        android:width="20dp"
+        android:height="20dp"
         android:alpha="0.2" />
 
     <item
         android:drawable="@drawable/ic_bug"
-        android:gravity="start|top"
-        android:left="90dp"
-        android:top="40dp"
-        android:width="32dp"
-        android:height="32dp"
+        android:gravity="center"
+        android:left="-40dp"
+        android:top="-10dp"
+        android:width="24dp"
+        android:height="24dp"
         android:alpha="0.3" />
 
     <item
         android:drawable="@drawable/ic_bug"
-        android:gravity="center_horizontal|top"
-        android:left="-60dp"
-        android:top="5dp"
-        android:width="28dp"
-        android:height="28dp"
-        android:alpha="0.25" />
-
-    <item
-        android:drawable="@drawable/ic_bug"
-        android:gravity="center"
-        android:left="20dp"
-        android:top="15dp"
+        android:gravity="end|top"
+        android:right="80dp"
+        android:top="8dp"
         android:width="22dp"
         android:height="22dp"
-        android:alpha="0.4" />
-
-    <item
-        android:drawable="@drawable/ic_bug"
-        android:gravity="end|top"
-        android:right="100dp"
-        android:top="10dp"
-        android:width="36dp"
-        android:height="36dp"
         android:alpha="0.15" />
 
     <item
         android:drawable="@drawable/ic_bug"
-        android:gravity="end|top"
-        android:right="20dp"
-        android:top="30dp"
-        android:width="20dp"
-        android:height="20dp"
-        android:alpha="0.25" />
-
-    <item
-        android:drawable="@drawable/ic_bug"
-        android:gravity="start|bottom"
-        android:left="50dp"
-        android:bottom="10dp"
-        android:width="40dp"
-        android:height="40dp"
-        android:alpha="0.1" />
-
-    <item
-        android:drawable="@drawable/ic_bug"
         android:gravity="center_horizontal|bottom"
-        android:left="80dp"
-        android:bottom="-5dp"
-        android:width="30dp"
-        android:height="30dp"
-        android:alpha="0.35" />
-
-    <item
-        android:drawable="@drawable/ic_bug"
-        android:gravity="end|bottom"
-        android:right="140dp"
-        android:bottom="15dp"
-        android:width="26dp"
-        android:height="26dp"
-        android:alpha="0.2" />
-
-    <item
-        android:drawable="@drawable/ic_bug"
-        android:gravity="center"
-        android:left="-120dp"
-        android:top="-10dp"
-        android:width="60dp"
-        android:height="60dp"
-        android:alpha="0.08" />
+        android:bottom="2dp"
+        android:width="18dp"
+        android:height="18dp"
+        android:alpha="0.25" />
 
 </layer-list>

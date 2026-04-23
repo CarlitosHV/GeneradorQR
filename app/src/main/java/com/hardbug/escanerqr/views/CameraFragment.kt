@@ -97,11 +97,12 @@ class CameraFragment : Fragment() {
         setupFlashButton()
         setupGalleryButton()
 
-        ViewCompat.setOnApplyWindowInsetsListener(view) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val navHeight = resources.getDimensionPixelSize(R.dimen.fab_margin) * 4
+
+            val navCardOffset = resources.getDimensionPixelSize(R.dimen.fab_margin) * 7
             
-            val bottomMargin = insets.bottom + navHeight + resources.getDimensionPixelSize(R.dimen.fab_margin)
+            val bottomMargin = insets.bottom + navCardOffset
             
             btnFlash.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 this.bottomMargin = bottomMargin
